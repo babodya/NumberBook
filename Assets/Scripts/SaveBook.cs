@@ -19,30 +19,48 @@ public class SaveBook : MonoBehaviour
 
     public Image imageSource;
 
+    [SerializeField]
+    AudioClip dingDong;
+    AudioSource playSound;
+
+    [SerializeField]
+    GameObject msgPop;
+    [SerializeField]
+    Text alretMsg;
+
     private void Start()
     {
+        playSound = GetComponent<AudioSource>();
+
         filePath = Application.persistentDataPath + @"\saveBook";
         files = @"\numberBookList.json";
         imgFiles = $@"\";
         imgExtension =".png";
-    }
-
-    public void SaveFile()
-    {
 
         if (!Directory.Exists(filePath))
         {
             Directory.CreateDirectory(filePath);
         }
+        //DelegateSample.Instance.SaveOperate += SaveFile;
+        //DelegateSample.Instance.SaveOperate += SaveImage;
+
+    }
+
+    public void SaveFile()
+    {
+
+        playSound.PlayOneShot(dingDong);
 
         // 이름 나이 휴대폰번호 이미지경로 - name, age, phoneNum, imgUrl
-        NumberBook nb = new NumberBook(ifName.text, int.Parse(ifAge.text), ifPhoneNum.text, filePath + imgFiles + ifName.text + imgExtension);
+        NumberBook nb = new NumberBook(ifName.text, int.Parse(ifAge.text), ifPhoneNum.text, filePath + imgFiles + ifName.text + imgExtension, width: imageSource.sprite.texture.width, height: imageSource.sprite.texture.height);
 
         var t = JsonUtility.ToJson(nb);
         var t2 = JsonConvert.SerializeObject(nb);
 
         File.WriteAllText(filePath + files, t);
         File.WriteAllText(filePath + files, t2);
+        
+
     }
 
     public void SaveImage()
